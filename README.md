@@ -1,37 +1,56 @@
 # E-Commerce Project For Baby Tools
 
-### TECHNOLOGIES
+### Technologies
 
 - Python 3.9
 - Django 4.0.2
 - Venv
+- Pillow
 
-### Hints
+## Instructions
 
-This section will cover some hot tips when trying to interacting with this repository:
+1. Navigate to the application directory
 
-- Settings & Configuration for Django can be found in `babyshop_app/babyshop/settings.py`
-- Routing: Routing information, such as available routes can be found from any `urls.py` file in `babyshop_app` and corresponding subdirectories
+```bash
+  cd babyshop_app
+```
 
-### Photos
+2. Build the Docker Image
 
-##### Home Page with login
+```bash
+  docker build -t babyshop .
+```
 
-<img alt="" src="https://github.com/MET-DEV/Django-E-Commerce/blob/master/project_images/capture_20220323080815407.jpg"></img>
-##### Home Page with filter
-<img alt="" src="https://github.com/MET-DEV/Django-E-Commerce/blob/master/project_images/capture_20220323080840305.jpg"></img>
-##### Product Detail Page
-<img alt="" src="https://github.com/MET-DEV/Django-E-Commerce/blob/master/project_images/capture_20220323080934541.jpg"></img>
+3. Create a Docker Container from the Image
 
-##### Home Page with no login
-<img alt="" src="https://github.com/MET-DEV/Django-E-Commerce/blob/master/project_images/capture_20220323080953570.jpg"></img>
+```bash
+  docker run -p 5000:5000 --name babyshop-app babyshop
+```
 
+4. Log into the Container
 
-##### Register Page
+```bash
+  docker exec -it babyshop-app bash
+```
 
-<img alt="" src="https://github.com/MET-DEV/Django-E-Commerce/blob/master/project_images/capture_20220323081016022.jpg"></img>
+5. Create an Admin User
 
+```bash
+  python manage.py createsuperuser
+```
 
-##### Login Page
+```bash
+  Username: admin
+  E-Mail-Adresse: admin@example.com
+  Passwort: **\*\*\*\***
+  Passwort (nochmals): **\*\*\*\***
+```
 
-<img alt="" src="https://github.com/MET-DEV/Django-E-Commerce/blob/master/project_images/capture_20220323081044867.jpg"></img>
+6. Open the Admin Dashboard [http://localhost:5000/admin](http://localhost:5000/admin)
+
+7. Log in with the Admin User
+
+8. Add Content to the Application
+
+   - Categories
+   - Items
