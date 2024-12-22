@@ -1,6 +1,26 @@
 # Babyshop (Docker Example)
 
-### Overview
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Quickstart](#quickstart)
+- [Technologies](#technologies)
+- [Instructions](#instructions)
+  - [1. Navigate to the Application Directory](#1-navigate-to-the-application-directory)
+  - [2. Build the Docker Image](#2-build-the-docker-image)
+  - [3. Create a Docker Volume](#3-create-a-docker-volume)
+  - [4. Create a Docker Container from the Image](#4-create-a-docker-container-from-the-image)
+  - [5. Log into the Container](#5-log-into-the-container)
+  - [6. Create an Admin User](#6-create-an-admin-user)
+  - [7. Open the Admin Dashboard](#7-open-the-admin-dashboard)
+  - [8. Add Content to the Application](#8-add-content-to-the-application)
+- [Preview](#preview)
+
+---
+
+## Overview
 
 This repository serves as an example of how to use a Dockerfile to build a Docker image and subsequently create a container to host a Django-based project.
 
@@ -10,60 +30,82 @@ The project demonstrates:
 - Running the application in a Docker container.
 - Hosting the application on a specified port accessible via the host system.
 
-### Quickstart
+---
+
+## Quickstart
 
 Prerequisites
 To run this project, ensure you have the following installed on your system:
 
 - Docker (latest version)
 
-### Technologies
+---
+
+## Technologies
 
 - Python 3.9
 - Django 4.0.2
 - Venv
 - Pillow
 
-### Instructions
+---
 
-1. Navigate to the application directory
+## Instructions
+
+##### 1. Navigate to the application directory
 
 ```bash
   cd babyshop_app
 ```
 
-2. Build the Docker Image
+##### 2. Build the Docker Image
 
 ```bash
   docker build -t babyshop .
 ```
 
 - `-t | tag` The -t option allows you to give the image an easily recognizable name and, optionally, a version (e.g., babyshop:1.0).
-- `.`The dot (.) means the current directory is used as the build context
+- `.`The dot (.) means the current directory is used as the build context.
 
-3. Create a Docker Container from the Image
+> **Note**
+> You can find the Dockerfile under /babyshop_app/Dockerfile
+> with description
+
+##### 3. Create a Docker Volume
 
 ```bash
-  docker run -d -p 8025:5000 --name babyshop-app --restart always babyshop
+  docker volume create babyshop-data
 ```
 
-- `-d | detached` Runs the container in the background
-- `-p | port ` Maps the container's internal port (5000) to a port on the host system (8025).
-- `--name ` Assigns a custom name to the container
-- `--restart` Configures the container's restart policy
+##### 4. Create a Docker Container from the Image
 
-4. Log into the Container
+```bash
+  docker run -d -p 8025:8000 --name babyshop-app -v babyshop-data:/babyshop --restart always babyshop
+```
+
+- `-d | detached` Runs the container in the background.
+- `-p | port ` Maps the container's internal port (5000) to a port on the host system (8025).
+- `--name ` Assigns a custom name to the container.
+- `-v | Volume ` Mounts the SQLite database file (db.sqlite3) from the host system into the container at /app/db.sqlite3.
+- `--restart` Configures the container's restart policy.
+  - `always` The container is always restarted, regardless of its exit status.
+  - `unless-stop` The container is restarted unless it was manually stopped.
+  - `on-failure[:n]` The container is restarted only if it exits with a non-zero status (an error)
+    Optionally, you can specify a limit on restart attempts (n).
+  - `no` The container will not be restarted automatically (default behavior).
+
+##### 5. Log into the Container
 
 ```bash
   docker exec -it babyshop-app bash
 ```
 
 - `exec` Allows you to run commands directly inside a container without restarting it.
-- `-it | interactive & terminal` These options combined allow for an interactive shell session inside the container
-- `babyshop-app` The name of the container where the command will be executed
-- `bash` Starts the container's Bash shell, allowing you to work directly within the container
+- `-it | interactive & terminal` These options combined allow for an interactive shell session inside the container.
+- `babyshop-app` The name of the container where the command will be executed.
+- `bash` Starts the container's Bash shell, allowing you to work directly within the container.
 
-5. Create an Admin User
+##### 6. Create an Admin User
 
 ```bash
   python manage.py createsuperuser
@@ -76,14 +118,22 @@ To run this project, ensure you have the following installed on your system:
   Passwort (nochmals): *****
 ```
 
-6. Open the Admin Dashboard [http://localhost:8025/admin](http://localhost:8025/admin)
+##### 7. Open the Admin Dashboard
 
-7. Log in with the Admin User
+Access the admin dashboard at: [http://localhost:8025/admin](http://localhost:8025/admin)
 
-8. Add Content to the Application
+![Admin Login](./project_images/admin_login.png)
 
-   - Categories
-   - Items
+##### 8. Add Content to the Application
+
+Once logged in, add content to the application:
+
+- Categorys
+- Products
+- Users
+- Groups
+
+![Application Preview](./project_images/administration.png)
 
 ---
 
