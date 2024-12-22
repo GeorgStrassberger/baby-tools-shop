@@ -1,22 +1,27 @@
-# Pyhton version definieren
-FROM python:3.9
+# Dockerfile
+FROM python:3.9-slim
 
-#Festlegen des Arbeitsverzeichnis für den Container
+# Set the working directory
 WORKDIR /babyshop
 
-#Kopieren der daten in das Arbeitsverzeichnis
-COPY . /babyshop
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential libpq-dev && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Packete updaten und installieren, Django & Pillow
-RUN pip install --upgrade pip && pip install django==4.0.2 Pillow
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-#Run Django commands to set up the application
+# Copy the Django project
+COPY . .
+
+# Run Django commands to set up the database
+RUN python manage.py makemigrations
 RUN python manage.py migrate
 
-#Expose the Django default port
-EXPOSE 5000
+# Expose the port
+EXPOSE 8000
 
-#Shell Befehl um den server im Container zu starten
-CMD ["sh", "-c", "python manage.py runserver 0.0.0.0:5000"]
-
-#CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+# Command to run the app
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
