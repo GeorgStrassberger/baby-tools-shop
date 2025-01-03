@@ -1,7 +1,5 @@
 # Babyshop (Docker Example)
 
----
-
 ## Table of Contents
 
 - [Overview](#overview)
@@ -10,7 +8,7 @@
 - [Instructions](#instructions)
   - [1. Navigate to the Application Directory](#1-navigate-to-the-application-directory)
   - [2. Build the Docker Image](#2-build-the-docker-image)
-  - [3. Create a Docker Volume](#3-create-a-docker-volume)
+  - [3. Create Docker Volumes](#3-create-docker-volumes)
   - [4. Create a Docker Container from the Image](#4-create-a-docker-container-from-the-image)
   - [5. Log into the Container](#5-log-into-the-container)
   - [6. Create an Admin User](#6-create-an-admin-user)
@@ -45,7 +43,7 @@ To run this project, ensure you have the following installed on your system:
 
 - Python 3.9
 - Django 4.0.2
-- Venv
+- Venv (Python virtual environment)
 - Pillow
 
 ---
@@ -68,28 +66,37 @@ To run this project, ensure you have the following installed on your system:
 - `.`The dot (.) means the current directory is used as the build context.
 
 > **Note**
-> You can find the Dockerfile under /babyshop_app/Dockerfile
-> with description
+> Link to the [Dockerfile](./babyshop_app/Dockerfile) with description.
 
-##### 3. Create a Docker Volume
+##### 3. Create Docker Volumes
+
+To store the data persistently, so that it is not lost during a restart, we attach 2 volumes.
+In this case for the database und images.
 
 ```bash
-  docker volume create babyshop-data
+  docker volume create babyshop_db
+  docker volume create babyshop_media
 ```
 
 ##### 4. Create a Docker Container from the Image
 
 ```bash
-  docker run -d -p 8025:8000 --name babyshop-app -v babyshop-data:/babyshop --restart always babyshop
+  docker run -d \
+    -p 8025:8000 \
+    --name babyshop-app \
+    -v babyshop_db:/babyshop/db \
+    -v babyshop_media:/babyshop/media \
+    --restart unless-stopped \
+    babyshop
 ```
 
 - `-d | detached` Runs the container in the background.
 - `-p | port ` Maps the container's internal port (5000) to a port on the host system (8025).
 - `--name ` Assigns a custom name to the container.
-- `-v | Volume ` Mounts the SQLite database file (db.sqlite3) from the host system into the container at /app/db.sqlite3.
+- `-v | Volume ` Mounts the data from the host system into the container.
 - `--restart` Configures the container's restart policy.
   - `always` The container is always restarted, regardless of its exit status.
-  - `unless-stop` The container is restarted unless it was manually stopped.
+  - `unless-stopped` The container is restarted unless it was manually stopped.
   - `on-failure[:n]` The container is restarted only if it exits with a non-zero status (an error)
     Optionally, you can specify a limit on restart attempts (n).
   - `no` The container will not be restarted automatically (default behavior).
